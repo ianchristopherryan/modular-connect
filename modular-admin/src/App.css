@@ -1,0 +1,160 @@
+.App {
+  text-align: center;
+  scroll-behavior: unset ! important;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.configuration-menu {
+  display: flex;
+}
+
+
+.configuration-menu-button {
+  padding: 5px 5px 5px 5px;
+}
+
+.module-list-area {
+  padding: 2% 2% 2% 2%;
+  display: flex;
+  justify-content: center;
+}
+
+.module-list-container {
+  padding: 2% 2% 2% 2%;
+  width: 80%;
+  border: 1px solid gray;
+  background-color: #f0f0f0;
+}
+
+.configuration-details {
+  padding: 2% 2% 2% 5%;
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modules {
+  list-style: none; 
+  padding-left: 0;
+}
+
+.modules li {
+  display: block;
+  border: solid 2px #d0d0d0;
+  border-radius: .2em;
+  padding: .5em .8em .5em .5em; 
+  margin-bottom: 1em;
+  background-color: aliceblue;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  max-width: none;
+  font-weight: bold;
+}
+
+.module-handle {
+  padding-right: 10px;
+}
+
+.module-container {
+  padding: 10% 10% 10% 10%; 
+  border: 1px solid black;
+}
+
+.module-details-container { 
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.module-details-column {
+  width: 40%;
+}
+
+.small-text{ 
+  font-size: 10px;
+}
+
+.small-text-bold { 
+  font-size: 10px; 
+  font-weight: bold;
+}
+
+.edit-button:hover {
+  box-shadow: black;
+  transform: translateY (-2px);
+  cursor: pointer;
+}
+
+.delete-button:hover { 
+  box-shadow: black;
+  transform: translateY (-2px);
+  cursor: pointer;
+}
+
+.modules-details {
+  display: flex;
+  max-width: none;
+  font-weight: bold;
+  margin: 0;
+}
+
+.mytooltip > .tooltip-inner {
+  max-width: 100%
+}
+
+.audit-log {
+  padding: 2% 2% 2% 2%;
+}
+
+.Auth-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.Auth-form {
+  width: 420px;
+  box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px; 
+  padding-top: 30px;
+  padding-bottom: 20px; 
+  border-radius: 8px;
+  background-color: white;
+}
+
+.Auth-form-content {
+  padding-left: 12%; 
+  padding-right: 12%;
+}
+
+.Auth-form-title {
+  text-align: center; 
+  margin-bottom: 1em;
+  font-size: 24px;
+  color: rgb(34, 34, 34); 
+  font-weight: 800;
+}
+
+label {
+  font-size: 14px; 
+  font-weight: 600;
+  color: rgb(34, 34, 34);
+}
+
