@@ -44,11 +44,6 @@ function App() {
 
   const [userName, setUserName] = React.useState("iancryan");
 
-  const [auditLogChanges, setAuditLogChanges] = React.useState([]);
-  const [auditLogDisplay, setAuditLogDisplay] = React.useState(false);
-  const [auditLog, setAuditLog] = React.useState([]);
-  const [auditLogLoading, setAuditLogLoading] = React.useState(true);
-
   const [login, setLogin] = React.useState(true);
   const [loginUsername, setLoginUsername] = React.useState();
   const [loginPassword, setLoginPassword] = React.useState();
@@ -59,7 +54,6 @@ function App() {
   }
 
   useEffect(() => {
-    updateModuleDescriptors();
     loadConfigurations(true);
     loadModuleDescriptors();
   }, []);
@@ -115,37 +109,6 @@ function App() {
       );
   }
 
-  function updateModuleDescriptors() {
-    //not necessary right now
-    // fetch("https: //f7mu8ghv1c. execute-api.ap-southeast-2.amazonaws.com/test/refreshmodules")
-    //   .then(res => res.json())
-    //   .then(
-    //     (result) => {
-
-    //     },
-    //     (error) => {
-    //     }
-    //   );
-  }
-
-  function loadAuditLog() {
-    fetch("https://f7mu8qhv1c.execute-api.ap-southeast-2.amazonaws.com/test/audit")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          let sortedLog = result.sort(function (a, b) {
-            return new Date(b.timestamp) - new Date(a.timestamp);
-          });
-          setAuditLog(sortedLog);
-          setAuditLogLoading(false);
-        },
-        (error) => {
-
-          setError(error);
-        }
-      );
-  }
-
   function updateConfiguration() {
     setIsChanged(false);
     const requestOptions = {
@@ -164,37 +127,10 @@ function App() {
       .then(
         (result) => {
           loadConfigurations();
-          updateAuditLog();
         });
   }
 
-  function updateAuditLog() {
-    // if (auditLogChanges.length > 0) {
-
-    //   const requestOptions = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(auditLogChanges)
-    //   };
-
-    //   fetch('https: //f7musqhvic.execute-api.ap-southeast-2.amazonaws.com/test/audit', requestOptions)
-    //     .then(response => response.json())
-    //     .then(
-    //       (result) => {
-    //         setAuditLogChanges([]);
-    //       });
-    // }
-  }
-
   function deleteConfiguration() {
-    auditLogChanges.push({
-      id: uuidv4(),
-      userName: userName,
-      timestamp: (new Date()).toUTCString(),
-      details: "Configuration deleted: " + selectedConfiguration.name,
-      oldValue: JSON.stringify(selectedConfiguration),
-      newValue: ""
-    });
     setIsChanged(false);
     setConfirmDeleteModalShow(false);
     const requestOptions = {
@@ -207,19 +143,10 @@ function App() {
       .then(
         (result) => {
           loadConfigurations(true);
-          updateAuditLog();
         });
   }
 
   function newConfiguration() {
-    auditLogChanges.push({
-      id: uuidv4(),
-      userName: userName,
-      timestamp: (new Date()).toUTCString(),
-      details: "New Configuration Created: " + newConfig.name,
-      oldValue: "",
-      newValue: JSON.stringify(newConfig)
-    });
     setIsChanged(false);
     const requestOptions = {
       method: 'POST',
@@ -237,7 +164,6 @@ function App() {
       .then(
         (result) => {
           loadConfigurations();
-          updateAuditLog();
         });
   }
 
@@ -251,15 +177,6 @@ function App() {
       description: descriptor.description,
       settings: descriptor.defaultSettings
     }
-
-    auditLogChanges.push({
-      id: uuidv4(),
-      userName: userName,
-      timestamp: (new Date()).toUTCString(),
-      details: "New Module Added to: " + selectedConfiguration.name,
-      oldValue: "",
-      newValue: JSON.stringify(newModule)
-    });
 
     console.log(descriptor);
     descriptor.settings.forEach(v => {
@@ -285,7 +202,6 @@ function App() {
 
   //handler for the main menu
   function handleSelect(key) {
-    setAuditLogDisplay(false);
     if (key.startsWith("new")) {
       newConfig.phoneNumber = availableNumbers[0];
       displayNewConfigurationModuleModal();
@@ -301,10 +217,6 @@ function App() {
       createNewModule(key);
     }
 
-    if (key.startsWith("audit")) {
-      setAuditLogDisplay(true);
-      loadAuditLog();
-    }
   }
 
   //displays the edit modal
@@ -433,64 +345,19 @@ function App() {
                   )})
                 }
               </NavDropdown>
-              {!auditLogDisplay && <NavDropdown title="Add Module" id="basic-nav-dropdown"> 
+              <NavDropdown title="Add Module" id="basic-nav-dropdown"> 
               {moduleDescriptors && moduleDescriptors.map((moduleDescriptor, index) => {
                 return (
                   <NavDropdown.Item key={"moduleDescriptor-" + index} eventKey={"moduleDescriptor-" + index}>{toTitleText (moduleDescriptor.name)}</NavDropdown.Item>
                 )})
               }
               </NavDropdown>
-              }
-              <Nav.Link eventKey="audit">Audit Log</Nav.Link> 
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-{ auditLogDisplay && 
-  <div className="audit-log">
-    <h3>Audit Log</h3> 
-    {auditLogLoading && <h5>Loading...</h5>}
-    <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>Date Time</th>
-          <th>Username</th> 
-          <th>Details</th> 
-          <th>Old Value</th>
-          <th>New Valve</th>
-        </tr>
-      </thead>
-      <tbody>
-        {auditLog && auditLog.map ((item) => {
-          return ( 
-            <tr>
-              <td>{new Date(item.timestamp).toLocaleString()}</td>
-              <td>{item.userName}</td>
-              <td>{item.details}</td>
-              <OverlayTrigger 
-              placement="top"
-              delay={{ show: 1000}} 
-              overlay={<Tooltip className="mytooltip" id="button-tooltip-2">{item.oldValue}</Tooltip>}
-              >
-                <td>{item.oldValue.substring(0,30)}</td>
-              </OverlayTrigger>
-              <OverlayTrigger 
-                placement="top"
-                delay={{ show: 1000}} 
-                overlay={<Tooltip className="mytooltip" id="button-tooltip-2">{item.newValue}</Tooltip>}
-                >
-                <td>{item.newValue.substring(0,30)}</td>
-              </OverlayTrigger> 
-            </tr>
-          )
-        })}
-      </tbody>
-    </Table> 
-  </div>
-}
-
-{ !auditLogDisplay && selectedConfiguration && selectedConfiguration.modules &&
+{ selectedConfiguration && selectedConfiguration.modules &&
   <>
     <div className=" configuration-details">
       <div>
@@ -764,14 +631,6 @@ function NewConfigurationModal(props) {
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => {
-            auditLogChanges.push({
-              id: uuidv4(),
-              userName: userName,
-              timestamp: (new Date()).toUTCString(),
-              details: "New Module Added to: " + selectedConfiguration.name,
-              oldValue: JSON.stringify(selectedConfiguration.modules[editModuleIndex]),
-              newValue: JSON.stringify(editModule)
-            });
             selectedConfiguration.modules[editModuleIndex] = editModule;
             // setSelectedConfiguration ({...selectedConfiguration, modules: newModules});
             props.onHide();
