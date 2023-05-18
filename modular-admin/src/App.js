@@ -12,9 +12,6 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import { DistributeVertical, CardText, Trash} from 'react-bootstrap-icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -75,7 +72,6 @@ function App() {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result);
           setIsLoaded(true);
           setConfigurations(result);
           if (first) {
@@ -83,11 +79,10 @@ function App() {
           }
           //update the list of available numbers
           let filteredNumbers = [...allNumbers];
-          result.map((item, index) => {
+          result.map((item) => {
             filteredNumbers = filteredNumbers.filter(phoneNumber => phoneNumber !== item.phoneNumber);
           });
           setAvailableNumbers(filteredNumbers);
-          console.log("available numbers", filteredNumbers);
         },
         (error) => {
           setIsLoaded(true);
@@ -178,7 +173,6 @@ function App() {
       settings: descriptor.defaultSettings
     }
 
-    console.log(descriptor);
     descriptor.settings.forEach(v => {
       if (v.pair) {
         if (v.pair[0].default) {
@@ -258,13 +252,6 @@ function App() {
     setIsChanged(true);
   }
 
-  function toLocalTime(time) {
-    let d = new Date(time);
-    let offset = (new Date().getTimezoneOffset() / 60) * -1;
-    let n = new Date(d.getTime() + offset);
-    return n;
-  }
-
   function onLoginSubmit() {
     if (loginPassword === "admin") {
       setUserName(loginUsername);
@@ -333,7 +320,7 @@ function App() {
     <div className="square border">
       <Navbar bg="light">
         <Container>
-          <Navbar.Brand href="#home">Configuration Editors</Navbar.Brand> 
+          <Navbar.Brand href="#home">Configuration Editor</Navbar.Brand> 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav onSelect={handleSelect} className="me-auto">
@@ -362,7 +349,7 @@ function App() {
     <div className=" configuration-details">
       <div>
         <h3>{selectedConfiguration.name}</h3>
-        ({selectedConfiguration.phoneNumber.replace(/\D+/g, '').replace(/(\d{2})(\d{1})(\d{4})(\d{4})/, '+$1 $2 $3 $4')})
+        ({selectedConfiguration.phoneNumber})
       </div> 
       <div className="configuration-menu">
         <div className= 'configuration-menu-button' >
@@ -387,44 +374,44 @@ function App() {
                   return (
                   <Draggable key={id} draggableId={"draggableId-" + id + index} index={index}>
                   {(provided) => (
-                    <li key={id} ref={provided.innerRef} {...provided.draggableProps} >
-                      <div ref={el => modulesRef.current[index] = el} className="module-header">
-                        <div className="module-handle" {...provided.dragHandleProps}>
-                          <DistributeVertical/> 
+                    <li ref={provided.innerRef} {...provided.draggableProps} >
+                        <div ref={el => modulesRef.current[index] = el} className="module-header">
+                          <div className="module-handle" {...provided.dragHandleProps}>
+                            <DistributeVertical/> 
+                          </div>
+                          <div className="module-title">{toTitleText (name)}</div> 
+                          <div className="module-edit"> 
+                            <span>
+                              <Trash className="delete-button" onClick={() => {
+                                let newModules = Array.from (selectedConfiguration.modules);
+                                newModules.splice(index, 1);
+                                setSelectedConfiguration({...selectedConfiguration, modules: newModules});
+                                setIsChanged (true)
+                              }}/>
+                              &nbsp;
+                              <CardText className="edit-button" onClick={() => {
+                                displayEditModuleModal(index);
+                              }}/>
+                            </span> 
+                          </div> 
                         </div>
-                        <div className="module-title">{toTitleText (name)}</div> 
-                        <div className="module-edit"> 
-                          <span>
-                            <Trash className="delete-button" onClick={() => {
-                              let newModules = Array.from (selectedConfiguration.modules);
-                              newModules.splice(index, 1);
-                              setSelectedConfiguration({...selectedConfiguration, modules: newModules});
-                              setIsChanged (true)
-                            }}/>
-                            &nbsp;
-                            <CardText className="edit-button" onClick={() => {
-                              displayEditModuleModal(index);
-                            }}/>
-                          </span> 
+                        <hr/>
+                        <div className="module-details-container">
+                          <div className="module-details-column a">
+                          {selectedConfiguration.modules[index].description && <div><span className="small-text-bold">Description: </span><span className="small-text">{selectedConfiguration.modules[index].description}</span></div>}
+                            {Object.entries (selectedConfiguration.modules[index].settings).map(([key, value], index) => {
+                              return (
+                                <div key={key+index} ><span className="small-text-bold">{toTitleText(key)}: </span><span className="small-text">{value}</span></div>
+                              )
+                            }
+                          )}
+                          </div>
+                          <div className="module-details-column b">
+                            {selectedConfiguration.modules[index].exitAction && <div><span className="small-text-bold">Exit Action: </span><span className="small-text">{selectedConfiguration.modules[index].exitAction}</span></div>}
+                            {selectedConfiguration.modules[index].exitActionValue && <div><span className="small-text-bold">Exit Action Value: </span><span className="small-text">{selectedConfiguration.modules[index].exitActionValue}</span></div>}
+                            {selectedConfiguration.modules[index].condition && <div><span className="small-text-bold">Condition: </span><span className="small-text">{selectedConfiguration.modules[index].condition}</span></div>}
+                          </div>
                         </div> 
-                      </div>
-                      <hr/>
-                      <div className="module-details-container">
-                        <div className="module-details-column a">
-                        {selectedConfiguration.modules[index].description && <div><span className="small-text-bold">Description: </span><span className="small-text">{selectedConfiguration.modules[index].description}</span></div>}
-                          {Object.entries (selectedConfiguration.modules[index].settings).map(([key, value]) => {
-                            return (
-                              <div><span className="small-text-bold">{toTitleText(key)}: </span><span className="small-text">{value}</span></div>
-                            )
-                          }
-                        )}
-                        </div>
-                        <div className="module-details-column b">
-                          {selectedConfiguration.modules[index].exitAction && <div><span className="small-text-bold">Exit Action: </span><span className="small-text">{selectedConfiguration.modules[index].exitAction}</span></div>}
-                          {selectedConfiguration.modules[index].exitActionValue && <div><span className="small-text-bold">Exit Action Value: </span><span className="small-text">{selectedConfiguration.modules[index].exitActionValue}</span></div>}
-                          {selectedConfiguration.modules[index].condition && <div><span className="small-text-bold">Condition: </span><span className="small-text">{selectedConfiguration.modules[index].condition}</span></div>}
-                        </div>
-                      </div> 
                     </li>
                   )}
                   </Draggable>
@@ -573,7 +560,7 @@ function NewConfigurationModal(props) {
             </Form.Group>
             {editDescriptor.settings && editDescriptor.settings.map((desc, index) => {
               return (
-                <>
+                <React.Fragment key={"desc" + index}>
                   {desc.pair &&
                     <Row className="mb-3">
                       <Col>
@@ -585,7 +572,7 @@ function NewConfigurationModal(props) {
                     </Row>
                   }
                   {!desc.pair && moduleSettingsField(index, desc)}
-                </>
+                </React.Fragment>
               )
               })
             }
@@ -602,7 +589,7 @@ function NewConfigurationModal(props) {
                       <option value="none" key='select-none' >None</option>
                       <option value="hangup" key='hangup-none' >Hangup</option>
                       <option value="transferQueue" key='transferQueue-none' >Transfer to Queue</option>
-                      <option value="transferWorkingQueue" key='transferQueue-none' >Transfer to Working Queue</option>
+                      <option value="transferWorkingQueue" key='transferWorkingQueue-none' >Transfer to Working Queue</option>
                       <option value="transferNumber" key='transferNumber-none' >Transfer to Number</option>
                     </Form.Select>
                     <Form.Text className="text-muted">The exit action that will be performed when this module completes.</Form.Text>
