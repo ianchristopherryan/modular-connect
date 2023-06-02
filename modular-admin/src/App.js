@@ -64,7 +64,7 @@ function App() {
 
   //load the config, if first is true then it will set the first config active
   function loadConfigurations(first) {
-    fetch("https://aqutbvxghd.execute-api.ap-southeast-2.amazonaws.com/Test/configurations")
+    fetch("https://APIPATH.execute-api.ap-southeast-2.amazonaws.com/Test/configurations")
 
       .then(res => res.json())
       .then(
@@ -83,7 +83,7 @@ function App() {
   }
 
   function loadModuleDescriptors() {
-    fetch("https://aqutbvxghd.execute-api.ap-southeast-2.amazonaws.com/Test/modules")
+    fetch("https://APIPATH.execute-api.ap-southeast-2.amazonaws.com/Test/modules")
       .then(res => res.json())
       .then(
         (result) => {
@@ -108,7 +108,7 @@ function App() {
       })
     };
 
-    fetch('https://aqutbvxghd.execute-api.ap-southeast-2.amazonaws.com/Test/configurations', requestOptions)
+    fetch('https://APIPATH.execute-api.ap-southeast-2.amazonaws.com/Test/configurations', requestOptions)
       .then(response => response.json())
       .then(
         (result) => {
@@ -124,7 +124,7 @@ function App() {
       headers: { 'Content-Type': 'application/json' }
     };
 
-    fetch('https://aqutbvxghd.execute-api.ap-southeast-2.amazonaws.com/Test/configurations/' + selectedConfiguration.id, requestOptions)
+    fetch('https://APIPATH.execute-api.ap-southeast-2.amazonaws.com/Test/configurations/' + selectedConfiguration.id, requestOptions)
       .then(response => response.json())
       .then(
         (result) => {
@@ -145,7 +145,7 @@ function App() {
       })
     };
 
-    fetch('https://aqutbvxghd.execute-api.ap-southeast-2.amazonaws.com/Test/configurations', requestOptions)
+    fetch('https://APIPATH.execute-api.ap-southeast-2.amazonaws.com/Test/configurations', requestOptions)
       .then(response => response.json())
       .then(
         (result) => {
