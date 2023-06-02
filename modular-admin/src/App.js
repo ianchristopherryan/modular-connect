@@ -36,10 +36,7 @@ function App() {
 
   const modulesRef = useRef([]);
 
-  const allNumbers = ["+61272025088", "+61272025265", "+61279086626", "+61730535476"];
-  const [availableNumbers, setAvailableNumbers] = useState([...allNumbers]);
-
-  const [userName, setUserName] = React.useState("iancryan");
+  const [userName, setUserName] = React.useState("");
 
   const [login, setLogin] = React.useState(true);
   const [loginUsername, setLoginUsername] = React.useState();
@@ -77,12 +74,6 @@ function App() {
           if (first) {
             setSelectedConfiguration(result[0]);
           }
-          //update the list of available numbers
-          let filteredNumbers = [...allNumbers];
-          result.map((item) => {
-            filteredNumbers = filteredNumbers.filter(phoneNumber => phoneNumber !== item.phoneNumber);
-          });
-          setAvailableNumbers(filteredNumbers);
         },
         (error) => {
           setIsLoaded(true);
@@ -462,22 +453,15 @@ function NewConfigurationModal(props) {
         </Modal.Title> 
       </Modal.Header> 
       <Modal.Body>
-        <p>{editDescriptor.description}</p> 
         <h4>Settings</h4>
         <Form>
           <Form.Group className="mb-3" controlId="phoneNumber" key="phoneNumber">
             <Form.Label>Phone Number</Form.Label>
 
-            <Form.Select onChange={(e) => {
+            <Form.Control onChange={(e) => {
                 newConfig.phoneNumber = e.target.value;
               }
-              } defaultValue={availableNumbers[0]}>
-              {availableNumbers.map((element, index) => {
-                return (
-                <option value={element} key={element}>{element}</option>
-                )
-              })}
-            </Form.Select>
+            } type="text" />
             <Form.Text className="text-muted">The phone number for this configuration.</Form.Text> 
           </Form.Group>
           <Form.Group className="mb-3" controlId="name" key="name">
@@ -609,7 +593,7 @@ function NewConfigurationModal(props) {
                     }
                     } type="text" defaultValue={editModule.condition} />
                   </Form.Group>
-                  <Form.Text className="text-muted">The condition that will be evaluated to decide if this module is executed. No condition or 'true' will mean the module is e</Form.Text>
+                  <Form.Text className="text-muted">The condition that will be evaluated to decide if this module is executed. No condition or 'true' will mean the module is executed.</Form.Text>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
